@@ -1,0 +1,30 @@
+﻿@page "/"
+@inject Services.MovieService movieService
+@using Models.ApiResponseModels
+
+<h1>Movie list</h1>
+@if (Movie != null)
+{
+    @foreach (var movie in Movie.d)
+    {
+        <p>Title: @movie.l</p>
+    }
+} else
+{
+    <p>Loading in progress</p>
+}
+
+
+<SurveyPrompt Title="How is Blazor working for you?" />
+
+@code {
+
+    public MovieSearchResult Movie { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        Movie = await movieService.GetMovieAsync();
+
+    }
+}
