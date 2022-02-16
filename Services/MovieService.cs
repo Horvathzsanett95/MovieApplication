@@ -1,4 +1,5 @@
-﻿using MovieApplication.Models.ApiResponseModels;
+﻿using MovieApplication.Enums;
+using MovieApplication.Models.ApiResponseModels;
 using RestSharp;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace MovieApplication.Services
 {
     public class MovieService
     {
-        public async Task<MovieSearchResult> GetMovieAsync(string searchText)
+        public async Task<MovieSearchResult> GetMovieAsync(string searchText, OrderChoice order)
         {
             if(searchText == "")
             {
@@ -23,6 +24,14 @@ namespace MovieApplication.Services
             RestResponse response =  await client.ExecuteAsync(request);
             MovieSearchResult movie =
                 JsonSerializer.Deserialize<MovieSearchResult>(response.Content);
+            if(order == OrderChoice.OrderbyTitleAscending)
+            {
+                movie.d = movie.d.OrderBy(result => result.l).ToList();
+            }
+            if(order == OrderChoice.OrderbyTitleDescending)
+            {
+                movie.d = movie.d.OrderByDescending(result => result.l).ToList();
+            }
             return movie;
         }
     }
