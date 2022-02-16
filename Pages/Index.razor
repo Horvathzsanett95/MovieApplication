@@ -1,27 +1,29 @@
 ﻿@page "/"
 @inject Services.MovieService movieService
+@inject NavigationManager NavigationManager
 @using Models.ApiResponseModels
+@using Microsoft.AspNetCore.Mvc
 @using Enums
 
 <h1>Movie list<img alt="Film reel icon" src="/images/film-reel.png" style="width: 40px; margin: 10px" /></h1><span></span>
 @if (Movie != null)
 {
-<EditForm Model="@Movie" OnValidSubmit="@GetSearchResult">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-    <label>
-        Seach by title:
-        <InputText id="name" @bind-Value="SearchText" />
-    </label>
-    <label>
-        Order results by:
-        <InputSelect @bind-Value="OrderChoice">
-            <option value="@OrderChoice.OrderbyTitleAscending">Title(Ascending)</option>
-            <option value="@OrderChoice.OrderbyTitleDescending">Title(Descending)</option>
-        </InputSelect>
-    </label>
-    <button type="submit">Search</button>
-</EditForm>
+    <EditForm Model="@Movie" OnValidSubmit="@GetSearchResult">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <label>
+            Seach by title:
+            <InputText id="name" @bind-Value="SearchText" />
+        </label>
+        <label>
+            Order results by:
+            <InputSelect @bind-Value="OrderChoice">
+                <option value="@OrderChoice.OrderbyTitleAscending">Title(Ascending)</option>
+                <option value="@OrderChoice.OrderbyTitleDescending">Title(Descending)</option>
+            </InputSelect>
+        </label>
+        <button type="submit">Search</button>
+    </EditForm>
     if (Movie.d == null)
     {
         <p>Search for get movies</p>
@@ -30,7 +32,9 @@
     {
         @foreach (var movie in Movie.d)
         {
+        <div @ondblclick="() => OnClick(movie.id)">
             <p>Title: @movie.l</p>
+        </div>
             if (movie.i != null)
             {
                 <img alt="Movie cover" src="@movie.i.imageUrl" style="width: 200px" />
@@ -63,4 +67,11 @@ else
     {
         Movie = await movieService.GetMovieAsync(SearchText, OrderChoice);
     }
+
+    public void OnClick(string id)
+    {
+        NavigationManager.NavigateTo("Details/" + id);
+
+    }
+
 }
