@@ -5,19 +5,35 @@
 <h1>Movie list</h1>
 @if (Movie != null)
 {
-    @foreach (var movie in Movie.d)
-    {
-        <p>Title: @movie.l</p>
-        if (movie.i != null)
-        {
-            <img alt="Movie cover" src="@movie.i.imageUrl" style="width: 200px" />
-        }
+    <EditForm Model="@Movie" OnValidSubmit="@GetSearchResult">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
 
+        <InputText id="name" @bind-Value="SearchText" />
+
+        <button type="submit">Search</button>
+    </EditForm>
+    if (Movie.d == null)
+    {
+        <p>Search for get movies</p>
     }
+    else
+    {
+        @foreach (var movie in Movie.d)
+        {
+            <p>Title: @movie.l</p>
+            if (movie.i != null)
+            {
+                <img alt="Movie cover" src="@movie.i.imageUrl" style="width: 200px" />
+            }
+
+        }
+    }
+
 }
 else
 {
-    <p>Loading in progress</p>
+    <p>Loading content</p>
 }
 
 
@@ -26,11 +42,17 @@ else
 @code {
 
     public MovieSearchResult Movie { get; set; }
+    public string SearchText { get; set; }
 
 
     protected override async Task OnInitializedAsync()
     {
-        Movie = await movieService.GetMovieAsync();
+        Movie = await movieService.GetMovieAsync("");
 
+    }
+
+    public async Task GetSearchResult()
+    {
+        Movie = await movieService.GetMovieAsync(SearchText);
     }
 }
