@@ -8,8 +8,14 @@
     @foreach (var movie in Movie.d)
     {
         <p>Title: @movie.l</p>
+        if (movie.i != null)
+        {
+            <img alt="Movie cover" src="@movie.i.imageUrl" style="width: 200px" />
+        }
+
     }
-} else
+}
+else
 {
     <p>Loading in progress</p>
 }
